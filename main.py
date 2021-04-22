@@ -1,13 +1,13 @@
 import feedparser
-import pyowm
-from pyowm.exceptions import api_response_error, api_call_error
 from telebot import types
 import telebot
 import COVID19Py
+import requests
+import datetime
 
 bot = telebot.TeleBot("1644586994:AAGtW78FVpmDscoiV-ZRWAXNvFLrJ-aKjbo")  # апи бота
 
-owm = pyowm.OWM('797385fc66158e63cb61ac82a7d4ee8c', language="ru")  # ключ и язык
+token = "797385fc66158e63cb61ac82a7d4ee8c"  # токен погоды
 
 
 # Новости
@@ -51,27 +51,55 @@ def news(message):
 # Погода
 @bot.message_handler(commands=['weather'])
 def weather(message):  # дублирует
-    try:
-        city_name = message.text[9:]  # цифра 9 удаляет слово weather
+    send_message = f"Привет {message.from_user.first_name}!\n Напиши название города, где ты хочешь кзнать погоду!"
+    bot.send_message(message.chat.id, send_message, parse_mode='html')
+    bot.register_next_step_handler(message, answer_weather)
 
-        bot.send_message(message.chat.id, "Погода в городе " + city_name)
-        observation = owm.weather_at_place(city_name)  # Место где будет показывавть погоду
-        w = observation.get_weather()
-        temp = w.get_temperature('celsius')["temp"]  # получение температуры
-        wind = w.get_wind()["speed"]  # Скрость ветра
-        answer = "В городе/стране " + city_name + " сейчас " + w.get_detailed_status() + "\n"
-        answer += "Сейчас примерно " + str(temp) + " °C" + "\n"
-        answer += "Ветер " + str(wind) + " м/c" + "\n"
-        bot.send_message(message.chat.id, answer)  # ввывод в телеграмм
-        # проверка на существующий город/страна
-    except api_response_error.NotFoundError:
-        bot.send_message(message.chat.id, "Нет данных город/страна " + city_name)
-        pass
-    # проверка на введение город/страна
-    except api_call_error.APICallError:
-        if city_name == "":
-            bot.send_message(message.chat.id, "Вы не ввели город/страна")
-            pass
+
+def answer_weather(message):
+    # иконки погоды
+    weather_icons = {
+        "Clear": "Ясно \U00002600",
+        "Clouds": "Облачно \U00002601",
+        "Rain": "Дождь \U00002614",
+        "Drizzle": "Слабый дождь \U00002614",
+        "Thunderstorm": "Гроза \U000026A1",
+        "Snow": "Снег \U0001F328",
+        "Mist": "Туман \U0001F32B",
+        "Shower rain": "Ливень \U000026C6"
+    }
+    try:
+        city_name = message.text # отправка в сообщениия в ТГ
+
+        r = requests.get(
+            f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={token}&units=metric"
+        )
+        data = r.json()
+
+        weather_description = data["weather"][0]["main"]
+        if weather_description in weather_icons:   # проверка если совпадает значение словаря то мы заберем его значение
+            wd = weather_icons[weather_description]
+        else:
+            wd = "Посмотри в окно, у меня нет иконки на этот день XD!"
+
+        # тут берем данные из ключей json
+        city_name = data["name"]
+        temperature = data["main"]["temp"]
+        humidity = data["main"]["humidity"]
+        pressure = data["main"]["pressure"]
+        wind = data["wind"]["speed"]
+        sunrise = datetime.datetime.fromtimestamp(data["sys"]["sunrise"])
+        sunset = datetime.datetime.fromtimestamp(data["sys"]["sunset"])
+
+        weather_send = (f"**{datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}**\n"
+                        f"Погода в городе: {city_name}\nТемпература: {temperature}C° {wd}\n"
+                        f"Влажность: {humidity}%\nДавление: {pressure} мм.рт.ст\n"
+                        f"Скорость ветра: {wind} м/с\nВосход: {sunrise}\n"
+                        f"Закат: {sunset}")
+
+        bot.send_message(message.chat.id, weather_send, parse_mode='html')
+    except Exception as ex:
+        bot.send_message(message.chat.id, "Вы ввели не верный город!")
 
 
 covid19 = COVID19Py.COVID19()
