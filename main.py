@@ -2,8 +2,9 @@ import feedparser
 from telebot import types
 import telebot
 import COVID19Py
-import requests
 import datetime
+import requests
+from bs4 import BeautifulSoup
 
 bot = telebot.TeleBot("1644586994:AAGtW78FVpmDscoiV-ZRWAXNvFLrJ-aKjbo")  # апи бота
 
@@ -69,7 +70,7 @@ def answer_weather(message):
         "Shower rain": "Ливень \U000026C6"
     }
     try:
-        city_name = message.text # отправка в сообщениия в ТГ
+        city_name = message.text  # отправка в сообщениия в ТГ
 
         r = requests.get(
             f"http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={token}&units=metric"
@@ -77,7 +78,7 @@ def answer_weather(message):
         data = r.json()
 
         weather_description = data["weather"][0]["main"]
-        if weather_description in weather_icons:   # проверка если совпадает значение словаря то мы заберем его значение
+        if weather_description in weather_icons:  # проверка если совпадает значение словаря то мы заберем его значение
             wd = weather_icons[weather_description]
         else:
             wd = "Посмотри в окно, у меня нет иконки на этот день XD!"
@@ -165,6 +166,53 @@ def answer_covid(message):
                         f"Заболевших: </b>{location[0]['latest']['confirmed']:,}\n<b>Сметрей: </b>" \
                         f"{location[0]['latest']['deaths']:,}"
     bot.send_message(message.chat.id, final_message, parse_mode='html')
+
+
+# url сайта которого мы хоитм парсить
+URL = 'https://www.ivi.ru/new/movie-new'
+# заголовки
+HEADERS = {
+    # user-agent нужен чтобы сайт не посчитал нас ботами
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.105 YaBrowser/21.3.2.193 Yowser/2.5 Safari/537.36'
+
+}
+HOST = 'https://www.ivi.ru'
+
+
+@bot.message_handler(commands=['films'])
+def films(message):
+    parse_films(message)
+
+
+# парсинг фильмов
+def parse_films(message):
+    # функция для получения html кода
+    def get_html(url, params=None):
+        r = requests.get(url, headers=HEADERS, params=params)
+        return r
+
+    def get_content(html):
+        soup = BeautifulSoup(html, 'html.parser')
+        # тут мы вытаскиваем знаения которые нам нужны
+        items = soup.find_all('li', class_='gallery__item gallery__item_virtual')
+
+        # список куда мы будем добавлять наши словари
+        film = []
+
+        for item in items:
+            film.append({
+                # 'title': item.find('div', class_='nbl-slimPosterBlock__title').get_text(strip=True),
+                'link': HOST + item.find('a', class_='nbl-slimPosterBlock_type_poster').get('href'),
+
+            })
+        for movie in film:
+            bot.send_message(message.chat.id, movie)
+
+    def parse():
+        html = get_html(URL)
+        get_content(html.text)
+
+    parse()
 
 
 bot.polling(none_stop=True)
