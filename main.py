@@ -1,3 +1,4 @@
+from horoscope import HOROSCOPE
 import feedparser
 from telebot import types
 import telebot
@@ -202,7 +203,7 @@ def parse_films(message):
         for item in items:
             film.append({
                 # 'title': item.find('div', class_='nbl-slimPosterBlock__title').get_text(strip=True),
-                'link': HOST + item.find('a', class_='nbl-slimPosterBlock_type_poster').get('href'),
+                HOST + item.find('a', class_='nbl-slimPosterBlock_type_poster').get('href'),
 
             })
         for movie in film:
@@ -213,6 +214,55 @@ def parse_films(message):
         get_content(html.text)
 
     parse()
+
+
+@bot.message_handler(commands=['horoscope'])
+def horoscope(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)  # быстрые кнопки
+    btn1 = types.KeyboardButton('Рыбы')
+    btn2 = types.KeyboardButton('Овен')
+    btn3 = types.KeyboardButton('Рак')
+    btn4 = types.KeyboardButton('Лев')
+    markup.add(btn1, btn2, btn3, btn4)
+
+    send_message = f"<b>Привет {message.from_user.first_name}!</b>\nХочешь узнать свой гороскоп? <b>Тогда напиши свой " \
+                   f"знак!</b>" \
+                   f"например: Рак, Овен, Рыбы и так далее\n"
+    bot.send_message(message.chat.id, send_message, parse_mode='html', reply_markup=markup)
+    bot.register_next_step_handler(message, answer_horoscope)  # после команды вызов функции answer_horoscope
+
+
+def answer_horoscope(message):
+    final_message = ""
+    get_message_bot = message.text.strip().lower()  # делаю только нижние регистры
+    if get_message_bot == "близнецы":
+        HOROSCOPE.gemini(message, message)
+    elif get_message_bot == "рак":
+        horoscope.cancer()
+    elif get_message_bot == "козерог":
+        horoscope.capricorn()
+    elif get_message_bot == "дева":
+        horoscope.virgo()
+    elif get_message_bot == "водолей":
+        horoscope.aquarius()
+    elif get_message_bot == "телец":
+        horoscope.taurus()
+    elif get_message_bot == "лев":
+        horoscope.leo()
+    elif get_message_bot == "овен":
+        horoscope.aries()
+    elif get_message_bot == "рыбы":
+        horoscope.pisces(message)
+    elif get_message_bot == "стрелец":
+        horoscope.sagittarius()
+    elif get_message_bot == "весы":
+        horoscope.libra()
+    elif get_message_bot == "скорпион":
+        horoscope.scorpio()
+    else:
+        final_message = f"<u>Такого знака нет:</u>"
+
+    bot.send_message(message.chat.id, final_message, parse_mode='html')
 
 
 bot.polling(none_stop=True)

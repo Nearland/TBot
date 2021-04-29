@@ -8,7 +8,8 @@ HEADERS = {
 }
 HOST = 'https://www.ivi.ru'
 
-def mm ():
+
+def mm():
     def get_html(url, params=None):
         r = requests.get(url, headers=HEADERS, params=params)
         return r
