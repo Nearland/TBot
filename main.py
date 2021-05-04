@@ -233,34 +233,50 @@ def horoscope(message):
 
 
 def answer_horoscope(message):
-    final_message = ""
+    # ночь с 00:00 до 6:00
+    # утро с 6:00 до 12:00
+    # день с 12:00 до 18:00
+    # вечер с 18:00 до 00:00
+    date = datetime.datetime.today()
+    day = ""
+
+    if 0 < date.hour <= 6:
+        day = "Хорошей ночи"
+    elif 6 < date.hour <= 12:
+        day = "Хорошего утра."
+    elif 12 < date.hour <= 18:
+        day = "Хорошего дня."
+    elif 18 < date.hour <= 24:
+        day = "Хорошего вечера."
+
+    final_message = day
     get_message_bot = message.text.strip().lower()  # делаю только нижние регистры
     if get_message_bot == "близнецы":
-        HOROSCOPE.gemini(message, message)
+        HOROSCOPE.gemini(final_message, message)
     elif get_message_bot == "рак":
-        horoscope.cancer()
+        HOROSCOPE.cancer(final_message, message)
     elif get_message_bot == "козерог":
-        horoscope.capricorn()
+        HOROSCOPE.capricorn(final_message, message)
     elif get_message_bot == "дева":
-        horoscope.virgo()
+        HOROSCOPE.virgo(final_message, message)
     elif get_message_bot == "водолей":
-        horoscope.aquarius()
+        HOROSCOPE.aquarius(final_message, message)
     elif get_message_bot == "телец":
-        horoscope.taurus()
+        HOROSCOPE.taurus(final_message, message)
     elif get_message_bot == "лев":
-        horoscope.leo()
+        HOROSCOPE.leo(final_message, message)
     elif get_message_bot == "овен":
-        horoscope.aries()
+        HOROSCOPE.aries(final_message, message)
     elif get_message_bot == "рыбы":
-        horoscope.pisces(message)
+        HOROSCOPE.pisces(final_message, message)
     elif get_message_bot == "стрелец":
-        horoscope.sagittarius()
+        HOROSCOPE.sagittarius(final_message, message)
     elif get_message_bot == "весы":
-        horoscope.libra()
+        HOROSCOPE.libra(final_message, message)
     elif get_message_bot == "скорпион":
-        horoscope.scorpio()
+        HOROSCOPE.scorpio(final_message, message)
     else:
-        final_message = f"<u>Такого знака нет:</u>"
+        final_message = f"<b>Такого знака нет!</b>"
 
     bot.send_message(message.chat.id, final_message, parse_mode='html')
 

@@ -35,13 +35,14 @@ HEADERS = {
 }
 
 
+def get_html(url, params=None):
+    r = requests.get(url, headers=HEADERS, params=params)
+    return r
+
+
 class HOROSCOPE:
     # БЛИЗНЕЦЫ GEMINI
     def gemini(self, message):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
         # списки для хранения информации
         horoscope_today_gemini = []
         horoscope_tomorrow_gemini = []
@@ -56,6 +57,7 @@ class HOROSCOPE:
                     item.find('div', class_='article__item article__item_alignment_left '
                                             'article__item_html').get_text(strip=True)
                 })
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
             bot.send_message(message.chat.id, horoscope_today_gemini)
 
         def get_content_tomorrow(html):
@@ -68,6 +70,7 @@ class HOROSCOPE:
                     item.find('div', class_='article__item article__item_alignment_left '
                                             'article__item_html').get_text(strip=True)
                 })
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
             bot.send_message(message.chat.id, horoscope_tomorrow_gemini)
 
         def parse_gemini():
@@ -79,11 +82,7 @@ class HOROSCOPE:
         parse_gemini()
 
     # РАК CANCER
-    def cancer(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def cancer(self, message):
         # списки для хранения информации
         horoscope_today_cancer = []
         horoscope_tomorrow_cancer = []
@@ -95,11 +94,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_cancer.append({
-                    'cancer_today': item.find('div',
-                                              class_='article__item article__item_alignment_left '
-                                                     'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_cancer)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_cancer)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -108,12 +108,13 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_cancer.append({
-                    'cancer_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                               'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_cancer)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_cancer)
 
-        def parse_cancer(self):
+        def parse_cancer():
             html_can_tod = get_html(URL_today_cancer)
             html_can_tom = get_html(URL_tomorrow_cancer)
             get_content_today(html_can_tod.text)
@@ -122,11 +123,7 @@ class HOROSCOPE:
         parse_cancer()
 
     # КОЗЕРОГ CAPRICORN
-    def capricorn(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def capricorn(self, message):
         # списки для хранения информации
         horoscope_today_capricorn = []
         horoscope_tomorrow_capricorn = []
@@ -138,11 +135,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_capricorn.append({
-                    'capricorn_today': item.find('div',
-                                                 class_='article__item article__item_alignment_left '
-                                                        'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_capricorn)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_capricorn)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -151,10 +149,11 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_capricorn.append({
-                    'capricorn_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                                  'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_capricorn)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_capricorn)
 
         def parse_capricorn():
             html_cap_tod = get_html(URL_today_capricorn)
@@ -165,11 +164,7 @@ class HOROSCOPE:
         parse_capricorn()
 
     # ДЕВА VIRGO
-    def virgo(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def virgo(self, message):
         # списки для хранения информации
         horoscope_today_virgo = []
         horoscope_tomorrow_virgo = []
@@ -181,11 +176,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_virgo.append({
-                    'virgo_today': item.find('div',
-                                             class_='article__item article__item_alignment_left '
-                                                    'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_virgo)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_virgo)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -194,10 +190,11 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_virgo.append({
-                    'virgo_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                              'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_virgo)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_virgo)
 
         def parse_virgo():
             html_vir_tod = get_html(URL_today_virgo)
@@ -208,11 +205,7 @@ class HOROSCOPE:
         parse_virgo()
 
     # ВОДОЛЕЙ AQUARIUS
-    def aquarius(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def aquarius(self, message):
         # списки для хранения информации
         horoscope_today_aquarius = []
         horoscope_tomorrow_aquarius = []
@@ -224,11 +217,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_aquarius.append({
-                    'aquarius_today': item.find('div',
-                                                class_='article__item article__item_alignment_left '
-                                                       'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_aquarius)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_aquarius)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -237,10 +231,11 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_aquarius.append({
-                    'aquarius_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                                 'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_aquarius)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_aquarius)
 
         def parse_aquarius():
             html_aqu_tod = get_html(URL_today_aquarius)
@@ -251,11 +246,7 @@ class HOROSCOPE:
         parse_aquarius()
 
     # ТЕЛЕЦ TAURUS
-    def taurus(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def taurus(self, message):
         # списки для хранения информации
         horoscope_today_taurus = []
         horoscope_tomorrow_taurus = []
@@ -267,11 +258,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_taurus.append({
-                    'taurus_today': item.find('div',
-                                              class_='article__item article__item_alignment_left '
-                                                     'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_taurus)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_taurus)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -280,10 +272,11 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_taurus.append({
-                    'taurus_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                               'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_taurus)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_taurus)
 
         def parse_taurus():
             html_tau_tod = get_html(URL_today_taurus)
@@ -294,11 +287,7 @@ class HOROSCOPE:
         parse_taurus()
 
     # ЛЕВ LEO
-    def leo(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def leo(self, message):
         # списки для хранения информации
         horoscope_today_leo = []
         horoscope_tomorrow_leo = []
@@ -310,11 +299,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_leo.append({
-                    'leo_today': item.find('div',
-                                           class_='article__item article__item_alignment_left '
-                                                  'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_leo)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_leo)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -323,10 +313,11 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_leo.append({
-                    'leo_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                            'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_leo)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_leo)
 
         def parse_leo():
             html_leo_tod = get_html(URL_today_leo)
@@ -337,11 +328,7 @@ class HOROSCOPE:
         parse_leo()
 
     # ОВЕН ARIES
-    def aries(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def aries(self, message):
         # списки для хранения информации
         horoscope_today_aries = []
         horoscope_tomorrow_aries = []
@@ -353,11 +340,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_aries.append({
-                    'aries_today': item.find('div',
-                                             class_='article__item article__item_alignment_left '
-                                                    'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_aries)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_aries)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -366,10 +354,11 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_aries.append({
-                    'aries_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                              'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_aries)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_aries)
 
         def parse_aries():
             html_ari_tod = get_html(URl_today_aries)
@@ -380,11 +369,7 @@ class HOROSCOPE:
         parse_aries()
 
     # РЫБЫ PISCES
-    def pisces(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def pisces(self, message):
         # списки для хранения информации
         horoscope_today_pisces = []
         horoscope_tomorrow_pisces = []
@@ -396,10 +381,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_pisces.append({
-                    'pisces_today': item.find('div',
-                                              class_='article__item article__item_alignment_left '
-                                                     'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
+                bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+                bot.send_message(message.chat.id, horoscope_today_pisces)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -408,9 +395,11 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_pisces.append({
-                    'pisces_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                               'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
+                bot.send_message(message.chat.id, "Гороскоп на завтра.")
+                bot.send_message(message.chat.id, horoscope_tomorrow_pisces)
 
         def parse_pisces():
             html_pis_tod = get_html(URL_today_pisces)
@@ -421,11 +410,7 @@ class HOROSCOPE:
         parse_pisces()
 
     # СТРЕЛЕЦ SAGITTARIUS
-    def sagittarius(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def sagittarius(self, message):
         # списки для хранения информации
         horoscope_today_sagittarius = []
         horoscope_tomorrow_sagittarius = []
@@ -437,11 +422,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_sagittarius.append({
-                    'sagittarius_today': item.find('div',
-                                                   class_='article__item article__item_alignment_left '
-                                                          'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_sagittarius)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_sagittarius)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -450,12 +436,13 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_sagittarius.append({
-                    'sagittarius_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                                    'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_sagittarius)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_sagittarius)
 
-        def parse_sagittarius(self):
+        def parse_sagittarius():
             html_sag_tod = get_html(URL_today_sagittarius)
             html_sag_tom = get_html(URL_tomorrow_sagittarius)
             get_content_today(html_sag_tod.text)
@@ -464,11 +451,7 @@ class HOROSCOPE:
         parse_sagittarius()
 
     # ВЕСЫ LIBRA
-    def libra(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def libra(self, message):
         # списки для хранения информации
         horoscope_today_libra = []
         horoscope_tomorrow_libra = []
@@ -480,11 +463,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_libra.append({
-                    'libra_today': item.find('div',
-                                             class_='article__item article__item_alignment_left '
-                                                    'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_libra)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_libra)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -493,10 +477,11 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_libra.append({
-                    'libra_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                              'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_libra)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_libra)
 
         def parse_libra():
             html_lib_tod = get_html(URL_today_libra)
@@ -507,11 +492,7 @@ class HOROSCOPE:
         parse_libra()
 
     # СКОРПИОН SCORPIO
-    def scorpio(self):
-        def get_html(url, params=None):
-            r = requests.get(url, headers=HEADERS, params=params)
-            return r
-
+    def scorpio(self, message):
         # списки для хранения информации
         horoscope_today_scorpio = []
         horoscope_tomorrow_scorpio = []
@@ -523,11 +504,12 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_today_scorpio.append({
-                    'scorpio_today': item.find('div',
-                                               class_='article__item article__item_alignment_left '
-                                                      'article__item_html').get_text(strip=True)
+                    item.find('div',
+                              class_='article__item article__item_alignment_left '
+                                     'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_today_scorpio)
+            bot.send_message(message.chat.id, "Гороскоп на сегодня.")
+            bot.send_message(message.chat.id, horoscope_today_scorpio)
 
         def get_content_tomorrow(html):
             soup = BeautifulSoup(html, 'html.parser')
@@ -536,10 +518,11 @@ class HOROSCOPE:
 
             for item in items:
                 horoscope_tomorrow_scorpio.append({
-                    'scorpio_tomorrow': item.find('div', class_='article__item article__item_alignment_left '
-                                                                'article__item_html').get_text(strip=True)
+                    item.find('div', class_='article__item article__item_alignment_left '
+                                            'article__item_html').get_text(strip=True)
                 })
-            # print(horoscope_tomorrow_scorpio)
+            bot.send_message(message.chat.id, "Гороскоп на завтра.")
+            bot.send_message(message.chat.id, horoscope_tomorrow_scorpio)
 
         def parse_scorpio():
             html_sco_tod = get_html(URL_today_scorpio)
