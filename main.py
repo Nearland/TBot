@@ -1,4 +1,6 @@
 from horoscope import HOROSCOPE
+import top_music
+
 import feedparser
 from telebot import types
 import telebot
@@ -223,6 +225,7 @@ def horoscope(message):
     btn2 = types.KeyboardButton('Овен')
     btn3 = types.KeyboardButton('Рак')
     btn4 = types.KeyboardButton('Лев')
+
     markup.add(btn1, btn2, btn3, btn4)
 
     send_message = f"<b>Привет {message.from_user.first_name}!</b>\nХочешь узнать свой гороскоп? <b>Тогда напиши свой " \
@@ -279,6 +282,45 @@ def answer_horoscope(message):
         final_message = f"<b>Такого знака нет!</b>"
 
     bot.send_message(message.chat.id, final_message, parse_mode='html')
+
+
+@bot.message_handler(commands=['top_music_today'])
+def horoscope(message):
+    parse_music(message)
+
+
+urL = 'https://hitmo.me/songs/top-today'
+Host = 'https://ruv.hotmo.org'
+
+
+def parse_music(message):
+    def get_html(url, params=None):
+        r = requests.get(url, headers=HEADERS, params=params)
+        return r
+
+    list_songs = []
+
+    def get_content(html):
+        soup = BeautifulSoup(html, 'html.parser')
+
+        songs = soup.find_all('li', class_='tracks__item track mustoggler')
+
+        for song in songs:
+            list_songs.append({
+                 #song.find('div', class_='track__title').get_text(strip=True),
+                 #song.find('div', class_='track__desc').get_text(strip=True),
+                 song.find('div', class_='track__info').get_text(),
+                 #Host + song.find('a', class_='track__info-l').get('href')
+            })
+
+        for music in list_songs:
+            bot.send_message(message.chat.id, music)
+
+    def parse():
+        html = get_html(urL)
+        get_content(html.text)
+
+    parse()
 
 
 bot.polling(none_stop=True)
