@@ -1,6 +1,4 @@
 from horoscope import HOROSCOPE
-import top_music
-
 import feedparser
 from telebot import types
 import telebot
@@ -48,8 +46,54 @@ def news(message):
         allheadlines.extend(getHeadlines(url))
 
     # здесь мы повторяем список allheadlines и отправляем каждый заголовок нашему боту в TG
-    for hl in allheadlines:
-        bot.send_message(message.chat.id, hl)
+    for hl in range(len(allheadlines)):
+        if hl <= 9:
+            bot.send_message(message.chat.id, allheadlines[hl])
+            if hl == 9:
+                bot.send_message(message.chat.id, "Хотите больше новостей? Да/Нет")
+                bot.register_next_step_handler(message, yesNo)
+
+
+def yesNo(message):
+    def parseRSS(rss_url):
+        return feedparser.parse(rss_url)
+
+    #  функция предназначена для захвата заголовка и ссылки RSS-канала
+    #  и возвращает в виде списка
+    def getHeadlines(rss_url):
+        headlines = []
+
+        feed = parseRSS(rss_url)
+        for newsitem in feed['items']:
+            # headlines.append(newsitem['title'])
+            headlines.append(newsitem['link'])
+            # headlines.append(newsitem['id'])
+            # headlines.append(newsitem['summary'])
+            # headlines.append(newsitem['published'])
+
+        return headlines
+
+    allheadlines = []
+
+    newsurls = {
+        'googlenews': 'https://news.google.com/rss?hl=ru&gl=RU&ceid=RU:ru',  # сайт с новостями
+    }
+
+    # Здесь мы перебираем URL-адреса каналов и вызываем getHeadlines (),
+    # чтобы объединить возвращенные заголовки со всеми заголовками
+    for key, url in newsurls.items():
+        allheadlines.extend(getHeadlines(url))
+
+    get_message_bot = message.text.strip().lower()  # делаю только нижние регистры
+    if get_message_bot == "да":
+        # здесь мы повторяем список allheadlines и отправляем каждый заголовок нашему боту в TG
+        for hl in range(len(allheadlines)):
+            if hl <= 9:
+                pass
+            elif hl <= 30:
+                bot.send_message(message.chat.id, allheadlines[hl])
+    else:
+        bot.send_message(message.chat.id, "Как хочешь.")
 
 
 # Погода

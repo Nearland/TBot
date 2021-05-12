@@ -81,6 +81,7 @@ def get_content(html):
            # get_text(strip=True),
 
         })
+
     print(films)
     # print(len(films))
 
