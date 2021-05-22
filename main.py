@@ -1,4 +1,5 @@
 from horoscope import HOROSCOPE
+from films import FILMS
 import feedparser
 from telebot import types
 import telebot
@@ -11,6 +12,11 @@ bot = telebot.TeleBot("1644586994:AAGtW78FVpmDscoiV-ZRWAXNvFLrJ-aKjbo")  # ап�
 
 token = "797385fc66158e63cb61ac82a7d4ee8c"  # токен погоды
 
+HEADERS = {
+    # user-agent нужен чтобы сайт не посчитал нас ботами
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.105 YaBrowser/21.3.2.193 Yowser/2.5 Safari/537.36'
+
+}
 
 # Новости
 @bot.message_handler(commands=['news'])
@@ -215,51 +221,68 @@ def answer_covid(message):
     bot.send_message(message.chat.id, final_message, parse_mode='html')
 
 
-# url сайта которого мы хоитм парсить
-URL = 'https://www.ivi.ru/new/movie-new'
-# заголовки
-HEADERS = {
-    # user-agent нужен чтобы сайт не посчитал нас ботами
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.105 YaBrowser/21.3.2.193 Yowser/2.5 Safari/537.36'
-
-}
-HOST = 'https://www.ivi.ru'
-
-
 @bot.message_handler(commands=['films'])
 def films(message):
-    parse_films(message)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)  # быстрые кнопки
+    btn1 = types.KeyboardButton('Новинки')
+    btn2 = types.KeyboardButton('Артхаус')
+    btn3 = types.KeyboardButton('Боевики')
+    btn4 = types.KeyboardButton('Военные')
+    btn5 = types.KeyboardButton('Детектив')
+    btn6 = types.KeyboardButton('Драма')
+    btn7 = types.KeyboardButton('Комедия')
+    btn8 = types.KeyboardButton('Криминал')
+    btn9 = types.KeyboardButton('Мелодрама')
+    btn10 = types.KeyboardButton('Мистика')
+    btn11 = types.KeyboardButton('Приключения')
+    btn12 = types.KeyboardButton('Триллер')
+    btn13 = types.KeyboardButton('Ужасы')
+    btn14 = types.KeyboardButton('Фантастика')
+    btn15 = types.KeyboardButton('Фэнтези')
+
+    markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12, btn13, btn14, btn15)
+    send_message = f"<b>Привет {message.from_user.first_name}!</b>\nВыбери интересующий жанр фильмов и наслаждайся!"
+    bot.send_message(message.chat.id, send_message, parse_mode='html', reply_markup=markup)
+    bot.register_next_step_handler(message, answer_films)  # после команды вызов функции answer_horoscope
 
 
-# парсинг фильмов
-def parse_films(message):
-    # функция для получения html кода
-    def get_html(url, params=None):
-        r = requests.get(url, headers=HEADERS, params=params)
-        return r
+def answer_films(message):
+    bot.send_message(message.chat.id, 'Доброго времени суток!', reply_markup=types.ReplyKeyboardRemove())
 
-    def get_content(html):
-        soup = BeautifulSoup(html, 'html.parser')
-        # тут мы вытаскиваем знаения которые нам нужны
-        items = soup.find_all('li', class_='gallery__item gallery__item_virtual')
-
-        # список куда мы будем добавлять наши словари
-        film = []
-
-        for item in items:
-            film.append({
-                # 'title': item.find('div', class_='nbl-slimPosterBlock__title').get_text(strip=True),
-                HOST + item.find('a', class_='nbl-slimPosterBlock_type_poster').get('href'),
-
-            })
-        for movie in film:
-            bot.send_message(message.chat.id, movie)
-
-    def parse():
-        html = get_html(URL)
-        get_content(html.text)
-
-    parse()
+    final_message = ""
+    get_message_bot = message.text.strip().lower()  # делаю только нижние регистры
+    if get_message_bot == "новинки":
+        FILMS.new_films(final_message, message)
+    elif get_message_bot == "артхаус":
+        FILMS.art_house(final_message, message)
+    elif get_message_bot == "боевики":
+        FILMS.boeviki(final_message, message)
+    elif get_message_bot == "военные":
+        FILMS.voennye(final_message, message)
+    elif get_message_bot == "детектив":
+        FILMS.detective(final_message, message)
+    elif get_message_bot == "драма":
+        FILMS.drama(final_message, message)
+    elif get_message_bot == "комедия":
+        FILMS.comedy(final_message, message)
+    elif get_message_bot == "криминал":
+        FILMS.crime(final_message, message)
+    elif get_message_bot == "мелодрама":
+        FILMS.melodrama(final_message, message)
+    elif get_message_bot == "мистика":
+        FILMS.mystic(final_message, message)
+    elif get_message_bot == "приключения":
+        FILMS.adventure(final_message, message)
+    elif get_message_bot == "триллер":
+        FILMS.thriller(final_message, message)
+    elif get_message_bot == "ужасы":
+        FILMS.horror(final_message, message)
+    elif get_message_bot == "фантастика":
+        FILMS.fantastic(final_message, message)
+    elif get_message_bot == "фэнтези":
+        FILMS.fantasy(final_message, message)
+    else:
+        bot.send_message(message.chat.id, "Такого жанра нет!")
 
 
 @bot.message_handler(commands=['horoscope'])
@@ -297,6 +320,8 @@ def answer_horoscope(message):
         day = "Хорошего вечера."
 
     final_message = day
+    bot.send_message(message.chat.id, "Удачи!", reply_markup=types.ReplyKeyboardRemove())
+
     get_message_bot = message.text.strip().lower()  # делаю только нижние регистры
     if get_message_bot == "близнецы":
         HOROSCOPE.gemini(final_message, message)
