@@ -1,6 +1,6 @@
 from horoscope import HOROSCOPE
 from films import FILMS
-import feedparser
+from news import Newser
 from telebot import types
 import telebot
 import COVID19Py
@@ -18,88 +18,31 @@ HEADERS = {
 
 }
 
+
 # Новости
 @bot.message_handler(commands=['news'])
-def news(message):
-    #  функция для извлечения RSS-каналов
-    def parseRSS(rss_url):
-        return feedparser.parse(rss_url)
+def Newss(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)  # быстрые кнопки
+    btn1 = types.KeyboardButton('Местные')
+    btn2 = types.KeyboardButton('Всероссийские')
 
-    #  функция предназначена для захвата заголовка и ссылки RSS-канала
-    #  и возвращает в виде списка
-    def getHeadlines(rss_url):
-        headlines = []
-
-        feed = parseRSS(rss_url)
-        for newsitem in feed['items']:
-            # headlines.append(newsitem['title'])
-            headlines.append(newsitem['link'])
-            # headlines.append(newsitem['id'])
-            # headlines.append(newsitem['summary'])
-            # headlines.append(newsitem['published'])
-
-        return headlines
-
-    allheadlines = []
-
-    newsurls = {
-        'googlenews': 'https://news.google.com/rss?hl=ru&gl=RU&ceid=RU:ru',  # сайт с новостями
-    }
-
-    # Здесь мы перебираем URL-адреса каналов и вызываем getHeadlines (),
-    # чтобы объединить возвращенные заголовки со всеми заголовками
-    for key, url in newsurls.items():
-        allheadlines.extend(getHeadlines(url))
-
-    # здесь мы повторяем список allheadlines и отправляем каждый заголовок нашему боту в TG
-    for hl in range(len(allheadlines)):
-        if hl <= 9:
-            bot.send_message(message.chat.id, allheadlines[hl])
-            if hl == 9:
-                bot.send_message(message.chat.id, "Хотите больше новостей? Да/Нет")
-                bot.register_next_step_handler(message, yesNo)
+    markup.add(btn1, btn2)
+    send_message = f"<b>Привет {message.from_user.first_name}!</b>\nВыбери новости и читай!"
+    bot.send_message(message.chat.id, send_message, parse_mode='html', reply_markup=markup)
+    bot.register_next_step_handler(message, answer_news)  # после команды вызов функции answer_news
 
 
-def yesNo(message):
-    def parseRSS(rss_url):
-        return feedparser.parse(rss_url)
+def answer_news(message):
+    bot.send_message(message.chat.id, 'Доброго времени суток уважаемый читатель!', reply_markup=types.ReplyKeyboardRemove())
 
-    #  функция предназначена для захвата заголовка и ссылки RSS-канала
-    #  и возвращает в виде списка
-    def getHeadlines(rss_url):
-        headlines = []
-
-        feed = parseRSS(rss_url)
-        for newsitem in feed['items']:
-            # headlines.append(newsitem['title'])
-            headlines.append(newsitem['link'])
-            # headlines.append(newsitem['id'])
-            # headlines.append(newsitem['summary'])
-            # headlines.append(newsitem['published'])
-
-        return headlines
-
-    allheadlines = []
-
-    newsurls = {
-        'googlenews': 'https://news.google.com/rss?hl=ru&gl=RU&ceid=RU:ru',  # сайт с новостями
-    }
-
-    # Здесь мы перебираем URL-адреса каналов и вызываем getHeadlines (),
-    # чтобы объединить возвращенные заголовки со всеми заголовками
-    for key, url in newsurls.items():
-        allheadlines.extend(getHeadlines(url))
-
+    final_message = ""
     get_message_bot = message.text.strip().lower()  # делаю только нижние регистры
-    if get_message_bot == "да":
-        # здесь мы повторяем список allheadlines и отправляем каждый заголовок нашему боту в TG
-        for hl in range(len(allheadlines)):
-            if hl <= 9:
-                pass
-            elif hl <= 30:
-                bot.send_message(message.chat.id, allheadlines[hl])
+    if get_message_bot == "местные":
+        Newser.Local_news(final_message, message)
+    elif get_message_bot == "всероссийские":
+        Newser.All_news(final_message, message)
     else:
-        bot.send_message(message.chat.id, "Как хочешь.")
+        bot.send_message(message.chat.id, "Ошибка! Не верно выбранны новости")
 
 
 # Погода
@@ -219,6 +162,7 @@ def answer_covid(message):
                         f"Заболевших: </b>{location[0]['latest']['confirmed']:,}\n<b>Сметрей: </b>" \
                         f"{location[0]['latest']['deaths']:,}"
     bot.send_message(message.chat.id, final_message, parse_mode='html')
+    bot.send_message(message.chat.id, 'Не болей!', reply_markup=types.ReplyKeyboardRemove())
 
 
 @bot.message_handler(commands=['films'])
@@ -243,7 +187,7 @@ def films(message):
     markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12, btn13, btn14, btn15)
     send_message = f"<b>Привет {message.from_user.first_name}!</b>\nВыбери интересующий жанр фильмов и наслаждайся!"
     bot.send_message(message.chat.id, send_message, parse_mode='html', reply_markup=markup)
-    bot.register_next_step_handler(message, answer_films)  # после команды вызов функции answer_horoscope
+    bot.register_next_step_handler(message, answer_films)  # после команды вызов функции answer_films
 
 
 def answer_films(message):
@@ -376,10 +320,10 @@ def parse_music(message):
 
         for song in songs:
             list_songs.append({
-                 #song.find('div', class_='track__title').get_text(strip=True),
-                 #song.find('div', class_='track__desc').get_text(strip=True),
-                 song.find('div', class_='track__info').get_text(),
-                 #Host + song.find('a', class_='track__info-l').get('href')
+                # song.find('div', class_='track__title').get_text(strip=True),
+                # song.find('div', class_='track__desc').get_text(strip=True),
+                song.find('div', class_='track__info').get_text(),
+                # Host + song.find('a', class_='track__info-l').get('href')
             })
 
         for music in list_songs:
