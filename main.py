@@ -264,7 +264,7 @@ def answer_horoscope(message):
         day = "Хорошего вечера."
 
     final_message = day
-    bot.send_message(message.chat.id, "Удачи!", reply_markup=types.ReplyKeyboardRemove())
+    bot.send_message(message.chat.id, "Отличный знак задиака!", reply_markup=types.ReplyKeyboardRemove())
 
     get_message_bot = message.text.strip().lower()  # делаю только нижние регистры
     if get_message_bot == "близнецы":
@@ -334,6 +334,18 @@ def parse_music(message):
         get_content(html.text)
 
     parse()
+
+
+@bot.message_handler(commands=['start', 'help'])
+def helper(message):
+    send_message = f"<b>Привет {message.from_user.first_name}!</b>\nЯ инфо бот. У меня много возможностей.\n" \
+                   f" <b>Вот что я могу!</b>\n" \
+                   f"Чтобы узнать новости напиши {'/news'}\n" \
+                   f"Дабы узнать новости про covid19 нажми {'/covid'}\n" \
+                   f"Для того чтобы узнать свой гороскоп {'/horoscope'}\n" \
+                   f"Если хочешь узнать погоду напиши {'/weather'}\n" \
+                   f"Хочешь подборку фильмов на вечер тогда жми на {'/films'}\n"
+    bot.send_message(message.chat.id, send_message, parse_mode='html')
 
 
 bot.polling(none_stop=True)
