@@ -1,12 +1,17 @@
 from horoscope import HOROSCOPE
 from films import FILMS
 from news import Newser
+from CurrencyExchangeRate import Rate
 from telebot import types
 import telebot
 import COVID19Py
 import datetime
 import requests
 from bs4 import BeautifulSoup
+import os, sys
+
+
+sys.path.append('/home/a/akchur2k/programming-circle.ru/.local/lib/python3.6/site-packages')
 
 bot = telebot.TeleBot("1644586994:AAGtW78FVpmDscoiV-ZRWAXNvFLrJ-aKjbo")  # апи бота
 
@@ -17,6 +22,77 @@ HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.105 YaBrowser/21.3.2.193 Yowser/2.5 Safari/537.36'
 
 }
+
+
+# Курс вылют
+@bot.message_handler(commands=['course'])
+def course(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    btn1 = types.KeyboardButton('USD')
+    btn2 = types.KeyboardButton('EUR')
+    btn3 = types.KeyboardButton('CHF')
+    btn4 = types.KeyboardButton('GBP')
+    btn5 = types.KeyboardButton('JPY')
+    btn6 = types.KeyboardButton('UAH')
+    btn7 = types.KeyboardButton('KZT')
+    btn8 = types.KeyboardButton('BYN')
+    btn9 = types.KeyboardButton('TRY')
+    btn10 = types.KeyboardButton('CNY')
+    btn11 = types.KeyboardButton('AUD')
+    btn12 = types.KeyboardButton('CAD')
+    btn13 = types.KeyboardButton('PLN')
+    markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12, btn13)
+    bot.send_message(message.chat.id, "Выберите курс валюты!", reply_markup=markup)
+    bot.register_next_step_handler(message, answer_rates)
+
+
+def answer_rates(message):
+    final_message = ""
+    get_message_bot = message.text.strip().lower()  # делаю только нижние регистры
+    if get_message_bot == "usd":
+        bot.send_message(message.chat.id, "Доллар")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "eur":
+        bot.send_message(message.chat.id, "Евро")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "chf":
+        bot.send_message(message.chat.id, "Швейцарский франк")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "gbp":
+        bot.send_message(message.chat.id, "Фунт стерлинга")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "jpy":
+        bot.send_message(message.chat.id, "Йена")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "uah":
+        bot.send_message(message.chat.id, "Гривна")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "kzt":
+        bot.send_message(message.chat.id, "Казахский тенге")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "byn":
+        bot.send_message(message.chat.id, "Белорусский рубль")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "try":
+        bot.send_message(message.chat.id, "Турецкая лира")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "cny":
+        bot.send_message(message.chat.id, "Юань")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "aud":
+        bot.send_message(message.chat.id, "Австралийский доллар")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "cad":
+        bot.send_message(message.chat.id, "Канадский доллар")
+        Rate.currency_exchange(final_message, message)
+    elif get_message_bot == "pln":
+        bot.send_message(message.chat.id, "Польский злотый")
+        Rate.currency_exchange(final_message, message)
+    else:
+        bot.send_message(message.chat.id, "Ошибка! такой валюты нет")
+
+    bot.send_message(message.chat.id, 'До скорой встречи!',
+                     reply_markup=types.ReplyKeyboardRemove())
 
 
 # Новости
@@ -33,7 +109,8 @@ def Newss(message):
 
 
 def answer_news(message):
-    bot.send_message(message.chat.id, 'Доброго времени суток уважаемый читатель!', reply_markup=types.ReplyKeyboardRemove())
+    bot.send_message(message.chat.id, 'Доброго времени суток уважаемый читатель!',
+                     reply_markup=types.ReplyKeyboardRemove())
 
     final_message = ""
     get_message_bot = message.text.strip().lower()  # делаю только нижние регистры
@@ -340,11 +417,13 @@ def parse_music(message):
 def helper(message):
     send_message = f"<b>Привет {message.from_user.first_name}!</b>\nЯ инфо бот. У меня много возможностей.\n" \
                    f" <b>Вот что я могу!</b>\n" \
+                   f"Чтобы узнать курс валют жмякни на {'/course'}\n" \
                    f"Чтобы узнать новости напиши {'/news'}\n" \
                    f"Дабы узнать новости про covid19 нажми {'/covid'}\n" \
                    f"Для того чтобы узнать свой гороскоп {'/horoscope'}\n" \
                    f"Если хочешь узнать погоду напиши {'/weather'}\n" \
                    f"Хочешь подборку фильмов на вечер тогда жми на {'/films'}\n"
+
     bot.send_message(message.chat.id, send_message, parse_mode='html')
 
 
